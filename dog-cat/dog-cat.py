@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data.dataloader as dataloader
 import torch.nn.functional as F
-from torch.autograd import Variable
 from torchvision import datasets, transforms
 
 
@@ -60,7 +59,7 @@ class VGG11(nn.Module):
 
 
 EPOCH = 15
-BATCH_SIZE = 40
+BATCH_SIZE = 30
 trans = {
     "train": transforms.Compose([
         # 先Resize到256
@@ -93,7 +92,7 @@ def train(epoch):
     print('\nEpoch: %d' % epoch)
     net.train()
     for batch_idx, (x, y) in enumerate(train_loader):
-        x, y = Variable(x.cuda()), Variable(y.cuda())
+        x, y = x.cuda(), y.cuda()
         optimizer.zero_grad()
         out = net(x)
         loss = F.cross_entropy(out, y)
@@ -113,7 +112,7 @@ def test(epoch):
     correct = 0
     with torch.no_grad():
         for batch_idx, (x, y) in enumerate(validate_loader):
-            x, y = Variable(x.cuda()), Variable(y.cuda())
+            x, y = x.cuda(), y.cuda()
             out = net(x)
             loss += F.cross_entropy(out, y, reduction='sum')
             pred = out.data.max(1, keepdim=True)[1]
@@ -125,7 +124,7 @@ def test(epoch):
         ))
 
 
-for e in range(EPOCH + 1):
+for e in range(EPOCH):
     train(e)
     test(e)
 torch.save(net, 'dog-cat.pth')

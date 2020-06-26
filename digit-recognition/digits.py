@@ -6,13 +6,15 @@ from torchvision import datasets, transforms
 import torch.utils.data.dataloader as dataloader
 
 
+# LeNet5
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = nn.Sequential(
-            nn.Conv2d(1, 6, 5, 1, 2),
+            # 输入图像是28x28, 所以加个padding=2
+            nn.Conv2d(1, 6, 5, padding=2),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2)
+            nn.MaxPool2d(2, 2)
         )
         self.conv2 = nn.Sequential(
             nn.Conv2d(6, 16, 5),
@@ -50,7 +52,7 @@ class Net(nn.Module):
 BATCH_SIZE = 64
 EPOCH = 15
 log_interval = 500
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 trans = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.1307,), (0.3081,))
@@ -99,4 +101,3 @@ if __name__ == '__main__':
     for e in range(1, EPOCH + 1):
         train(e)
         test()
-    torch.save(model, 'model.pth')

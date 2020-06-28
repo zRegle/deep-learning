@@ -18,7 +18,7 @@ def train():
     data = torch.from_numpy(data)
     dl = DataLoader(data, batch_size=Config.batch_size, shuffle=True)
 
-    device = 'cuda' if Config.use_gpu else 'cpu'
+    device = torch.device('cuda' if Config.use_gpu else 'cpu')
 
     model = Poem(len(word2ix), Config.embedding_dim, Config.hidden_dim)
     optimizer = optim.Adam(model.parameters(), lr=Config.learning_rate)

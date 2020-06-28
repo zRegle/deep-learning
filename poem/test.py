@@ -13,7 +13,14 @@ model.load_state_dict(torch.load(Config.model_path, map_location=map_location))
 if Config.use_gpu:
     model = model.to('cuda')
 
+print('请输入生成模式:\n1.普通模式\n2.藏头诗模式')
+mode = int(input())
 print('请输入首句:')
 start_words = str(input())
-poetry = ''.join(generate(model, start_words, ix2word, word2ix))
+print('如有相关意境请输入，若无按回车继续:')
+prefix_words = str(input())
+gen = generate if mode == 1 else gen_acrostic
+start_words = start_words.replace(',', u'，').replace('.', u'。').replace('?', u'？').replace('!', u'！')
+prefix_words = prefix_words.replace(',', u'，').replace('.', u'。').replace('?', u'？').replace('!', u'！')
+poetry = ''.join(gen(model, start_words, ix2word, word2ix, prefix_words))
 print(poetry)
